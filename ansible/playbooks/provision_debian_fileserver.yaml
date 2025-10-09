@@ -3,10 +3,12 @@
   hosts: fileserver
   become: true
   vars:
-    new_username: "msviridov"
-    new_user_uid: 1000
-    new_group_name: "nas_admins"
-    new_group_gid: 10000
+    admin_username: "msviridov"
+    admin_user_uid: 1000
+    admin_group_name: "nas_admins"
+    admin_group_gid: 10000
+    nas_user_group_name: "nas_users"
+    nas_user_group_gid: 10001
     ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILe+cHeVb5A5bkRiX467Q+o9Hmo8UkBFX3nAlvROhNuL msviridov@HOME_PROD_ed25519"
 
     deb_packages:
@@ -32,6 +34,7 @@
     - name: Install required packages
       apt:
         name:
+          - curl
           - sudo
           - vim
         state: present
@@ -75,16 +78,22 @@
 
     - name: Create custom group with GID 10000
       group:
-        name: "{{ new_group_name }}"
-        gid: "{{ new_group_gid }}"
+        name: "{{ admin_group_name }}"
+        gid: "{{ admin_group_gid }}"
+        state: present
+
+    - name: Create custom group with GID 10001
+      group:
+        name: "{{ nas_user_group_name }}"
+        gid: "{{ nas_user_group_gid }}"
         state: present
 
     - name: Create new user with UID 1000
       user:
-        name: "{{ new_username }}"
-        uid: "{{ new_user_uid }}"
+        name: "{{ admin_username }}"
+        uid: "{{ admin_user_uid }}"
         groups:
-          - "{{ new_group_name }}"
+          - "{{ admin_group_name }}"
           - sudo
         shell: /bin/bash
         create_home: true
@@ -92,23 +101,23 @@
 
     - name: Set up passwordless sudo for the user
       lineinfile:
-        path: /etc/sudoers.d/{{ new_username }}
-        line: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
+        path: /etc/sudoers.d/{{ admin_username }}
+        line: "{{ admin_username }} ALL=(ALL) NOPASSWD:ALL"
         create: true
         mode: "0440"
         validate: "visudo -cf %s"
 
     - name: Create .ssh directory for the user
       file:
-        path: "/home/{{ new_username }}/.ssh"
+        path: "/home/{{ admin_username }}/.ssh"
         state: directory
-        owner: "{{ new_username }}"
-        group: "{{ new_username }}"
+        owner: "{{ admin_username }}"
+        group: "{{ admin_username }}"
         mode: "0700"
 
     - name: Add SSH public key to authorized_keys
       authorized_key:
-        user: "{{ new_username }}"
+        user: "{{ admin_username }}"
         key: "{{ ssh_public_key }}"
         state: present
 
@@ -135,6 +144,15 @@
         line: "PubkeyAuthentication yes"
         state: present
       notify: restart sshd
+
+    - name: Run complex shell command for reinstall packages needing setcap
+      ansible.builtin.shell: |
+        cd /var/lib/dpkg/info/ && \
+        apt install --reinstall $(grep -l 'setcap' * | sed -e 's/\.[^.]*$//g' | sort --unique)
+      args:
+        chdir: /var/lib/dpkg/info/
+        executable: /bin/bash
+      register: reinstall_output
 
   handlers:
     - name: restart sshd
