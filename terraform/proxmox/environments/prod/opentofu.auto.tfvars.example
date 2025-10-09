@@ -1,0 +1,7 @@
+# Copy this file to opentofu.auto.tfvars and fill in actual values
+# opentofu.auto.tfvars is gitignored and should never be committed
+
+virtual_environment_endpoint  = "https://192.168.1.100:8006/api2/json"
+virtual_environment_api_token = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+user_account_password         = "your-secure-password-here"
+user_account_ssh_key          = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname"
