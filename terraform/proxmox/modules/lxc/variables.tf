@@ -54,6 +54,15 @@ variable "description" {
   description = "Container description"
 }
 
+variable "devices" {
+  type = list(object({
+    gid  = optional(number, 0)
+    path = string
+  }))
+  default     = []
+  description = "List of host devices to passthrough to a container (e.g., /dev/dri/renderD128)"
+}
+
 variable "disk_size" {
   type        = number
   default     = 10
@@ -64,6 +73,12 @@ variable "features_nesting" {
   type        = bool
   default     = true
   description = "Enable container nesting (for Docker/LXC inside container)"
+}
+
+variable "gid" {
+  type        = number
+  default     = 0
+  description = "Group ID to be assigned to device node"
 }
 
 variable "ipv4_address" {
@@ -91,6 +106,17 @@ variable "memory_swap" {
   description = "Swap memory in MB"
 }
 
+variable "mounts" {
+  type = list(object({
+    acl       = optional(bool, false)
+    path      = string
+    replicate = optional(bool, false)
+    volume    = string
+  }))
+  default     = []
+  description = "Additional mount points for the container"
+}
+
 variable "network_bridge" {
   type        = string
   default     = "vmbr1"
@@ -113,6 +139,12 @@ variable "os_type" {
   type        = string
   default     = "debian"
   description = "Operating system type (ubuntu, debian, centos, etc.)"
+}
+
+variable "path" {
+  type        = string
+  default     = ""
+  description = "Device to pass through to the container (e.g., /dev/sda)"
 }
 
 variable "started" {

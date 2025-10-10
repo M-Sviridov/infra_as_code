@@ -24,6 +24,14 @@ resource "proxmox_virtual_environment_container" "lxc_container" {
     size         = var.disk_size
   }
 
+  dynamic "device_passthrough" {
+    for_each = var.devices
+    content {
+      gid  = device_passthrough.value.gid
+      path = device_passthrough.value.path
+    }
+  }
+
   features {
     nesting = var.features_nesting
   }
@@ -49,6 +57,16 @@ resource "proxmox_virtual_environment_container" "lxc_container" {
   memory {
     dedicated = var.memory_dedicated
     swap      = var.memory_swap
+  }
+
+  dynamic "mount_point" {
+    for_each = var.mounts
+    content {
+      acl       = mount_point.value.acl
+      path      = mount_point.value.path
+      replicate = mount_point.value.replicate
+      volume    = mount_point.value.volume
+    }
   }
 
   network_interface {
