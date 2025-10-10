@@ -7,7 +7,18 @@
     new_user_uid: 1000
     new_group_name: "nas_admins"
     new_group_gid: 10000
-    ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILe+cHeVb5A5bkRiX467Q+o9Hmo8UkBFX3nAlvROhNuL msviridov@HOME_PROD_ed25519"
+
+    # Add new user to these group by default
+    base_groups:
+      - "{{ new_group_name }}"
+      - sudo
+
+    # Add new user to these group if Docker is installed on the host
+    docker_groups:
+      - docker
+
+    # Change SSH key to the desired environment (DMZ, PROD, TEST, etc.)
+    ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL8H29fWtGTGJTld7ZctjoquZFS/860umr8XzsVjjjwu msviridov@HOME_DMZ_ed25519"
 
   tasks:
     - name: Update apt cache
@@ -28,13 +39,25 @@
         gid: "{{ new_group_gid }}"
         state: present
 
+    - name: Check if Docker is installed
+      command: which docker
+      register: docker_check
+      changed_when: false
+      failed_when: false
+
+    - name: Check if docker group exists
+      getent:
+        database: group
+        key: docker
+      register: docker_group_check
+      failed_when: false
+      when: docker_check.rc == 0
+
     - name: Create new user with UID 1000
       user:
         name: "{{ new_username }}"
         uid: "{{ new_user_uid }}"
-        groups:
-          - "{{ new_group_name }}"
-          - sudo
+        groups: "{{ base_groups + (docker_groups if (docker_check.rc == 0 and docker_group_check.ansible_facts.getent_group.docker is defined) else []) }}"
         shell: /bin/bash
         create_home: true
         state: present
