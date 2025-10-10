@@ -70,8 +70,9 @@ module "prod_frigate" {
   ]
 
 
-  disk_size        = 20
-  memory_dedicated = 8192
-  started          = true
-  tags             = ["opentofu", "prod"]
+  disk_size           = 20
+  memory_dedicated    = 8192
+  network_mac_address = "BC:24:11:3D:FF:66"
+  started             = true
+  tags                = ["opentofu", "prod"]
 }
