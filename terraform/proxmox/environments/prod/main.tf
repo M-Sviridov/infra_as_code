@@ -18,7 +18,7 @@ module "prod_fileserver" {
   description         = "Production File Server with 45Drives Cockpit Modules"
   memory_dedicated    = 512
   network_mac_address = "bc:24:11:1f:72:b4"
-  tags                = ["opentofu", "prod"]
+  tags                = ["opentofu", "prod", "tailscale"]
 }
 
 module "prod_frigate" {
@@ -58,7 +58,7 @@ module "prod_frigate" {
     },
     {
       gid  = 46
-      path = "/dev/bus/usb/002/002"
+      path = "/dev/bus/usb/002/008"
     },
   ]
 
@@ -66,13 +66,22 @@ module "prod_frigate" {
     {
       path   = "/mnt/frigate"
       volume = "/nvr/frigate"
-    }
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/appdata"
+      volume = "/flash/docker/appdata/prod-frigate"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/stacks"
+      volume = "/flash/docker/stacks/prod-frigate"
+    },
   ]
-
 
   disk_size           = 20
   memory_dedicated    = 8192
   network_mac_address = "BC:24:11:3D:FF:66"
   started             = true
-  tags                = ["opentofu", "prod"]
+  tags                = ["opentofu", "prod", "tailscale"]
 }
