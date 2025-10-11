@@ -83,5 +83,5 @@ module "prod_frigate" {
   memory_dedicated    = 8192
   network_mac_address = "BC:24:11:3D:FF:66"
   started             = true
-  tags                = ["opentofu", "prod", "tailscale"]
+  tags                = ["docker", "opentofu", "prod", "tailscale"]
 }
