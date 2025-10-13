@@ -14,7 +14,7 @@
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - "/mnt/docker/appdata/prod-control/dockge:/app/data"
-          - "/mnt/docker/stacks/prod-control:/opt/stacks"
+          - "/mnt/docker/stacks/prod-control:/mnt/docker/stacks/prod-control"
         env:
           DOCKGE_STACKS_DIR: "/mnt/docker/stacks/prod-control"
       when: inventory_hostname == 'prod-control'
@@ -30,7 +30,7 @@
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - "/mnt/docker/appdata/dockge:/app/data"
-          - "/mnt/docker/stacks:/opt/stacks"
+          - "/mnt/docker/stacks:/mnt/docker/stacks"
         env:
           DOCKGE_STACKS_DIR: "/mnt/docker/stacks"
       when: inventory_hostname != 'prod-control'
