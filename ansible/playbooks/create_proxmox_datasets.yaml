@@ -1,0 +1,80 @@
+---
+- name: Setup multiple ZFS datasets with defaults ACLs and permissions
+  hosts: heimdall
+  become: true
+  gather_facts: false
+
+  vars:
+    zfs_defaults:
+      owner: msviridov
+      group: nas_admins
+      mode: "2770"
+
+    zfs_datasets:
+      - name: flash/docker
+      - name: flash/docker/appdata
+      - name: flash/docker/stacks
+      - name: flash/docker/appdata/dmz-auth
+      - name: flash/docker/appdata/dmz-books
+      - name: flash/docker/appdata/dmz-photos
+      - name: flash/docker/appdata/dmz-rss
+      - name: flash/docker/appdata/dmz-vault
+      - name: flash/docker/appdata/prod-control
+      - name: flash/docker/appdata/prod-docker
+      - name: flash/docker/appdata/prod-frigate
+      - name: flash/docker/appdata/prod-pms
+
+  tasks:
+    - name: Ensure nas_admins group exists
+      group:
+        name: "{{ zfs_defaults.group }}"
+        state: present
+
+    - name: Ensure user exists
+      user:
+        name: "{{ zfs_defaults.owner }}"
+        group: "{{ zfs_defaults.group }}"
+        state: present
+
+    - name: Create ZFS datasets
+      community.general.zfs:
+        name: "{{ item.name }}"
+        state: present
+      loop: "{{ zfs_datasets }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Set ownership and permissions
+      file:
+        path: "/{{ item.name }}"
+        owner: "{{ item.owner | default(zfs_defaults.owner) }}"
+        group: "{{ item.group | default(zfs_defaults.group) }}"
+        mode: "{{ item.mode | default(zfs_defaults.mode) }}"
+        state: directory
+      loop: "{{ zfs_datasets }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Set default ACLs for user
+      ansible.posix.acl:
+        path: "/{{ item.name }}"
+        entity: ""
+        etype: user
+        permissions: rwx
+        default: true
+        state: present
+      loop: "{{ zfs_datasets }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Set default ACLs for group
+      ansible.posix.acl:
+        path: "/{{ item.name }}"
+        entity: ""
+        etype: group
+        permissions: rwx
+        default: true
+        state: present
+      loop: "{{ zfs_datasets }}"
+      loop_control:
+        label: "{{ item.name }}"
