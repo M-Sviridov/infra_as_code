@@ -19,3 +19,14 @@ output "auth_summary" {
     tags     = module.dmz_auth.tags
   }
 }
+
+output "photos_summary" {
+  description = "Complete summary"
+  value = {
+    vm_id    = module.dmz_photos.vm_id
+    hostname = module.dmz_photos.hostname
+    vlan     = module.dmz_photos.network_vlan_id
+    node     = module.dmz_photos.node_name
+    tags     = module.dmz_photos.tags
+  }
+}

@@ -73,3 +73,65 @@ module "dmz_auth" {
   network_mac_address = "BC:24:11:F8:AD:59"
   tags                = ["docker", "dmz", "opentofu"]
 }
+
+module "dmz_photos" {
+  source    = "../../modules/lxc"
+  providers = { proxmox = proxmox.root }
+
+  # Required variables
+  hostname         = "dmz-photos"
+  network_vlan_id  = 10
+  node_name        = "heimdall"
+  template_file_id = "local:vztmpl/debian-13-standard_13.1-2_amd64.tar.zst"
+  vm_id            = 102
+
+  # Secrets from variables
+  root_password   = var.root_password
+  ssh_public_keys = var.ssh_public_keys
+
+  # Optional variables 
+  cpu_cores   = 12
+  description = "Production DMZ Photos Server with Immich"
+
+  devices = [
+    { path = "/dev/nvidia0" },
+    { path = "/dev/nvidiactl" },
+    { path = "/dev/nvidia-uvm" },
+    { path = "/dev/nvidia-uvm-tools" },
+    { path = "/dev/nvidia-caps/nvidia-cap1" },
+    { path = "/dev/nvidia-caps/nvidia-cap2" },
+    { path = "/dev/nvram" },
+    {
+      gid  = 104
+      path = "/dev/dri/renderD128"
+    },
+    {
+      gid  = 44
+      path = "/dev/dri/card2"
+    },
+  ]
+
+  disk_size        = 20
+  memory_dedicated = 8192
+
+  mounts = [
+    {
+      path   = "/mnt/immich"
+      volume = "/tank/immich"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/appdata"
+      volume = "/flash/docker/appdata/dmz-photos"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/stacks"
+      volume = "/flash/docker/stacks/dmz-photos"
+    },
+  ]
+
+  network_mac_address = "BC:24:11:88:6C:71"
+  started             = true
+  tags                = ["docker", "dmz", "opentofu"]
+}
