@@ -1,11 +1,11 @@
-output "freshrss_summary" {
+output "rss_summary" {
   description = "Complete summary"
   value = {
-    vm_id    = module.dmz_freshrss.vm_id
-    hostname = module.dmz_freshrss.hostname
-    vlan     = module.dmz_freshrss.network_vlan_id
-    node     = module.dmz_freshrss.node_name
-    tags     = module.dmz_freshrss.tags
+    vm_id    = module.dmz_rss.vm_id
+    hostname = module.dmz_rss.hostname
+    vlan     = module.dmz_rss.network_vlan_id
+    node     = module.dmz_rss.node_name
+    tags     = module.dmz_rss.tags
   }
 }
 

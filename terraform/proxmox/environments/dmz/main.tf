@@ -1,9 +1,9 @@
-module "dmz_freshrss" {
+module "dmz_rss" {
   source    = "../../modules/lxc"
   providers = { proxmox = proxmox.root }
 
   # Required variables
-  hostname         = "dmz-freshrss"
+  hostname         = "dmz-rss"
   network_vlan_id  = 10
   node_name        = "heimdall"
   template_file_id = "local:vztmpl/debian-13-standard_13.1-2_amd64.tar.zst"
@@ -23,12 +23,12 @@ module "dmz_freshrss" {
     {
       acl    = true
       path   = "/mnt/docker/appdata"
-      volume = "/flash/docker/appdata/dmz-freshrss"
+      volume = "/flash/docker/appdata/dmz-rss"
     },
     {
       acl    = true
       path   = "/mnt/docker/stacks"
-      volume = "/flash/docker/stacks/dmz-freshrss"
+      volume = "/flash/docker/stacks/dmz-rss"
     },
   ]
 
