@@ -1,3 +1,45 @@
+module "dmz_books" {
+  source    = "../../modules/lxc"
+  providers = { proxmox = proxmox.root }
+
+  # Required variables
+  hostname         = "dmz-books"
+  network_vlan_id  = 10
+  node_name        = "heimdall"
+  template_file_id = "local:vztmpl/debian-13-standard_13.1-2_amd64.tar.zst"
+  vm_id            = 105
+
+  # Secrets from variables
+  root_password   = var.root_password
+  ssh_public_keys = var.ssh_public_keys
+
+  # Optional variables
+  cpu_cores        = 2
+  description      = "Production DMZ Books Server with Calibre"
+  disk_size        = 8
+  memory_dedicated = 2048
+
+  mounts = [
+    {
+      path   = "/mnt/data/media/books/calibre"
+      volume = "/tank/data/media/books/calibre"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/appdata"
+      volume = "/flash/docker/appdata/dmz-books"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/stacks"
+      volume = "/flash/docker/stacks/dmz-books"
+    },
+  ]
+
+  network_mac_address = "BC:24:11:CE:5F:08"
+  tags                = ["docker", "dmz", "opentofu"]
+}
+
 module "dmz_rss" {
   source    = "../../modules/lxc"
   providers = { proxmox = proxmox.root }
@@ -102,7 +144,7 @@ module "dmz_photos" {
     { path = "/dev/nvidia-caps/nvidia-cap2" },
     { path = "/dev/nvram" },
     {
-      gid  = 104
+      gid  = 992
       path = "/dev/dri/renderD128"
     },
     {

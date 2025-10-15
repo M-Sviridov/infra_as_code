@@ -30,3 +30,14 @@ output "photos_summary" {
     tags     = module.dmz_photos.tags
   }
 }
+
+output "books_summary" {
+  description = "Complete summary"
+  value = {
+    vm_id    = module.dmz_books.vm_id
+    hostname = module.dmz_books.hostname
+    vlan     = module.dmz_books.network_vlan_id
+    node     = module.dmz_books.node_name
+    tags     = module.dmz_books.tags
+  }
+}
