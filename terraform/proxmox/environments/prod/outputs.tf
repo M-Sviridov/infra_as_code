@@ -52,3 +52,14 @@ output "pms_summary" {
     tags     = module.prod_pms.tags
   }
 }
+
+output "jellyfin_summary" {
+  description = "Complete summary"
+  value = {
+    vm_id    = module.prod_jellyfin.vm_id
+    hostname = module.prod_jellyfin.hostname
+    vlan     = module.prod_jellyfin.network_vlan_id
+    node     = module.prod_jellyfin.node_name
+    tags     = module.prod_jellyfin.tags
+  }
+}

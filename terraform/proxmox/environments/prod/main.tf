@@ -49,7 +49,7 @@ module "prod_frigate" {
     { path = "/dev/nvidia-caps/nvidia-cap2" },
     { path = "/dev/nvram" },
     {
-      gid  = 104
+      gid  = 992
       path = "/dev/dri/renderD128"
     },
     {
@@ -58,7 +58,7 @@ module "prod_frigate" {
     },
     {
       gid  = 46
-      path = "/dev/bus/usb/002/008"
+      path = "/dev/bus/usb/002/004"
     },
   ]
 
@@ -130,6 +130,10 @@ module "prod_docker" {
       path   = "/mnt/docker/stacks"
       volume = "/flash/docker/stacks/prod-docker"
     },
+    {
+      path   = "/mnt/data"
+      volume = "/tank/data"
+    },
   ]
 
   network_mac_address = "BC:24:11:6A:F8:86"
@@ -183,7 +187,7 @@ module "prod_pms" {
 
   devices = [
     {
-      gid  = 104
+      gid  = 992
       path = "/dev/dri/renderD128"
     },
     {
@@ -216,4 +220,59 @@ module "prod_pms" {
   network_mac_address = "BC:24:11:F0:FA:BD"
   started             = true
   tags                = ["docker", "opentofu", "prod"]
+}
+
+module "prod_jellyfin" {
+  source    = "../../modules/lxc"
+  providers = { proxmox = proxmox.root }
+
+  # Required variables
+  hostname         = "prod-jellyfin"
+  network_vlan_id  = 20
+  node_name        = "heimdall"
+  template_file_id = "local:vztmpl/debian-13-standard_13.1-2_amd64.tar.zst"
+  vm_id            = 204
+
+  # Secrets from variables
+  root_password   = var.root_password
+  ssh_public_keys = var.ssh_public_keys
+
+  # Optional variables 
+  cpu_cores   = 6
+  description = "Production Jellyfin Media Server"
+
+  devices = [
+    {
+      gid  = 992
+      path = "/dev/dri/renderD128"
+    },
+    {
+      gid  = 44
+      path = "/dev/dri/card2"
+    },
+  ]
+
+  disk_size        = 10
+  memory_dedicated = 4096
+
+  mounts = [
+    {
+      path   = "/mnt/data"
+      volume = "/tank/data"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/appdata"
+      volume = "/flash/docker/appdata/prod-jellyfin"
+    },
+    {
+      acl    = true
+      path   = "/mnt/docker/stacks"
+      volume = "/flash/docker/stacks/prod-jellyfin"
+    },
+  ]
+
+  network_mac_address = "BC:24:11:86:25:8F"
+  started             = true
+  tags                = ["docker", "opentofu", "prod", "tailscale"]
 }
