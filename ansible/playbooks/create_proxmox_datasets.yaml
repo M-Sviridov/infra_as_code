@@ -22,6 +22,7 @@
       - name: flash/docker/appdata/prod-control
       - name: flash/docker/appdata/prod-docker
       - name: flash/docker/appdata/prod-frigate
+      - name: flash/docker/appdata/prod-jellyfin
       - name: flash/docker/appdata/prod-pms
 
   tasks:
