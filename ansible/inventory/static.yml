@@ -1,0 +1,9 @@
+---
+all:
+  children:
+    club:
+      hosts: pve-club
+    homelab_mgmt:
+      hosts: pbs-server
+  vars:
+    ansible_user: root
