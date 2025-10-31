@@ -1,41 +1,78 @@
 ---
-- name: Install Docker on a Debian Server
+- name: Install Docker on a Debian 13 system
   hosts: all
   become: true
 
+  vars:
+    docker_daemon_options:
+      live-restore: true
+      log-driver: "local"
+
+  handlers:
+    - name: restart_docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
   tasks:
     - name: Update apt cache
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
 
+    - name: Uninstall all conflicting packages
+      ansible.builtin.apt:
+        name:
+          - containerd
+          - docker.io
+          - docker-doc
+          - docker-compose
+          - podman-docker
+          - runc
+        state: absent
+
     - name: Install dependencies
-      apt:
+      ansible.builtin.apt:
         name:
           - curl
           - ca-certificates
-          - gnupg
+          - gnupg2
         state: present
 
     - name: Add Docker GPG key
-      get_url:
+      ansible.builtin.get_url:
         url: "https://download.docker.com/linux/debian/gpg"
         dest: /etc/apt/keyrings/docker.asc
         mode: "0644"
         force: true
 
     - name: Add Docker repository to apt sources
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian   trixie stable"
         state: present
+        filename: docker
         update_cache: true
 
     - name: Install Docker
-      apt:
+      ansible.builtin.apt:
         name:
-          - docker-ce
-          - docker-ce-cli
           - containerd.io
           - docker-buildx-plugin
+          - docker-ce
+          - docker-ce-cli
           - docker-compose-plugin
         state: present
+      notify: restart_docker
+
+    - name: Ensure /etc/docker directory exists
+      ansible.builtin.file:
+        path: /etc/docker
+        state: directory
+        mode: "0755"
+
+    - name: Configure Docker daemon options
+      ansible.builtin.copy:
+        content: "{{ docker_daemon_options | to_nice_json }}"
+        dest: /etc/docker/daemon.json
+        mode: "0644"
+      notify: restart_docker

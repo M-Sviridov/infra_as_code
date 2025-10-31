@@ -5,8 +5,9 @@
   vars:
     new_username: "msviridov"
     new_user_uid: 1000
-    new_group_name: "nas_admins"
-    new_group_gid: 10000
+    new_group_name: "msviridov"
+    new_group_gid: 1000
+    ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILe+cHeVb5A5bkRiX467Q+o9Hmo8UkBFX3nAlvROhNuL msviridov@HOME_PROD_ed25519"
 
     # Add new user to these group by default
     base_groups:
@@ -30,7 +31,7 @@
           - vim
         state: present
 
-    - name: Create custom group with GID 10000
+    - name: Create custom group with GID 1000
       group:
         name: "{{ new_group_name }}"
         gid: "{{ new_group_gid }}"

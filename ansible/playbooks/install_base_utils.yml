@@ -1,0 +1,25 @@
+---
+- name: Setup new Debian system with base utils
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install base utils
+      ansible.builtin.apt:
+        name:
+          - aptitude
+          - curl
+          - dnsutils
+          - net-tools
+          - sudo
+          - tmux
+          - tree
+          - unzip
+          - vim
+          - wget
+        state: present

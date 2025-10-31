@@ -1,0 +1,61 @@
+---
+- name: Install NVIDIA container toolkit on Debian 13 system
+  hosts: all
+  become: true
+
+  vars:
+    nvidia_container_toolkit_version: 1.18.0-1
+    docker_daemon_options:
+      runtimes:
+        nvidia:
+          args: []
+          path: nvidia-container-runtime
+
+  handlers:
+    - name: restart_docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install dependencies
+      ansible.builtin.apt:
+        name:
+          - curl
+          - gnupg2
+        state: present
+
+    - name: Add NVIDIA container signing key
+      ansible.builtin.get_url:
+        url: "https://nvidia.github.io/libnvidia-container/gpgkey"
+        dest: /etc/apt/trusted.gpg.d/nvidia-container-toolkit.asc
+        mode: "0644"
+        force: true
+
+    - name: Add NVIDIA container repository to sources list
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH) /"
+        state: present
+        filename: nvidia-container-toolkit
+        update_cache: true
+
+    - name: Install NVIDIA container toolkit
+      ansible.builtin.apt:
+        name:
+          - libnvidia-container1={{ nvidia_container_toolkit_version }}
+          - libnvidia-container-tools={{ nvidia_container_toolkit_version }}
+          - nvidia-container-toolkit={{ nvidia_container_toolkit_version }}
+          - nvidia-container-toolkit-base={{ nvidia_container_toolkit_version }}
+        state: present
+
+    - name: Configure Docker daemon options
+      ansible.builtin.copy:
+        content: "{{ docker_daemon_options | to_nice_json }}"
+        dest: /etc/docker/daemon.json
+        mode: "0644"
+      notify: restart_docker
