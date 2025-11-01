@@ -15,7 +15,10 @@
           - aptitude
           - curl
           - dnsutils
+          - htop
           - net-tools
+          - nmap
+          - rsync
           - sudo
           - tmux
           - tree
