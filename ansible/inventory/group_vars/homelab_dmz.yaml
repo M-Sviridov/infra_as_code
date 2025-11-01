@@ -1,3 +1,2 @@
 ---
-ansible_user: msviridov
 ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL8H29fWtGTGJTld7ZctjoquZFS/860umr8XzsVjjjwu msviridov@HOME_DMZ_ed25519"
