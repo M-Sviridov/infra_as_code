@@ -116,7 +116,7 @@ module "prod_docker" {
     { path = "/dev/nvram" },
   ]
 
-  disk_size        = 40
+  disk_size        = 80
   memory_dedicated = 32768
 
   mounts = [
@@ -133,6 +133,10 @@ module "prod_docker" {
     {
       path   = "/mnt/data"
       volume = "/tank/data"
+    },
+    {
+      path   = "/mnt/private"
+      volume = "/mnt/samsung-1tb/private"
     },
   ]
 
@@ -214,6 +218,10 @@ module "prod_pms" {
       acl    = true
       path   = "/mnt/data"
       volume = "/tank/data"
+    },
+    {
+      path   = "/mnt/private"
+      volume = "/mnt/samsung-1tb/private"
     },
   ]
 
