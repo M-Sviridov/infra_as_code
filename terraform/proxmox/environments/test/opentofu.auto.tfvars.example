@@ -1,0 +1,12 @@
+# Copy this file to opentofu.auto.tfvars and fill in actual values
+# opentofu.auto.tfvars is gitignored and should never be committed
+
+# Proxmox provider variables
+virtual_environment_endpoint        = "https://192.168.1.100:8006/api2/json"
+virtual_environment_api_token       = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+virtual_environment_root_username   = "root@pam"
+virtual_environment_root_password   = "your-secure-password-here"
+
+# Proxmox LXC container variables
+root_password                       = "your-secure-password-here"
+ssh_public_keys                     = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname"]
