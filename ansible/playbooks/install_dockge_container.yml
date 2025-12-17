@@ -1,6 +1,6 @@
 ---
 - name: Install Dockge container on Docker hosts
-  hosts: docker
+  hosts: homelab_docker
 
   tasks:
     - name: Deploy Dockge container (prod-control)
