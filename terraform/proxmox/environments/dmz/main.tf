@@ -16,13 +16,13 @@ module "dmz_books" {
   # Optional variables
   cpu_cores        = 2
   description      = "Production DMZ Books Server with Calibre"
-  disk_size        = 8
+  disk_size        = 16
   memory_dedicated = 2048
 
   mounts = [
     {
-      path   = "/mnt/data/media/books/calibre"
-      volume = "/tank/data/media/books/calibre"
+      path   = "/mnt/data/media/books/booklore"
+      volume = "/tank/data/media/books/booklore"
     },
     {
       acl    = true
