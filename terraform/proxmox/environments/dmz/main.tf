@@ -21,6 +21,10 @@ module "dmz_books" {
 
   mounts = [
     {
+      path   = "/mnt/data/torrents/books"
+      volume = "/tank/data/torrents/books"
+    },
+    {
       path   = "/mnt/data/media/books/booklore"
       volume = "/tank/data/media/books/booklore"
     },
