@@ -15,6 +15,7 @@ module "prod_fileserver" {
 
   # Optional variables 
   cpu_cores           = 2
+  disk_size           = 15
   description         = "Production File Server with 45Drives Cockpit Modules"
   memory_dedicated    = 512
   network_mac_address = "bc:24:11:1f:72:b4"
@@ -58,7 +59,7 @@ module "prod_frigate" {
     },
     {
       gid  = 46
-      path = "/dev/bus/usb/002/004"
+      path = "/dev/bus/usb/002/002"
     },
   ]
 
@@ -163,7 +164,7 @@ module "prod_control" {
   # Optional variables 
   cpu_cores           = 2
   description         = "Production Control Server for Centralized Management and Monitoring"
-  disk_size           = 10
+  disk_size           = 12
   memory_dedicated    = 2048
   network_mac_address = "BC:24:11:AE:7A:E8"
   started             = true
