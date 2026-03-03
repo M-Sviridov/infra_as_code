@@ -165,7 +165,7 @@ module "prod_control" {
   cpu_cores           = 2
   description         = "Production Control Server for Centralized Management and Monitoring"
   disk_size           = 12
-  memory_dedicated    = 2048
+  memory_dedicated    = 4096
   network_mac_address = "BC:24:11:AE:7A:E8"
   started             = true
   tags                = ["docker", "opentofu", "prod"]
@@ -187,7 +187,7 @@ module "prod_pms" {
   ssh_public_keys = var.ssh_public_keys
 
   # Optional variables
-  cpu_cores   = 6
+  cpu_cores   = 12
   description = "Production Perfect Media Server"
 
   devices = [
@@ -201,7 +201,7 @@ module "prod_pms" {
     },
   ]
 
-  disk_size        = 20
+  disk_size        = 30
   memory_dedicated = 16384
 
   mounts = [
