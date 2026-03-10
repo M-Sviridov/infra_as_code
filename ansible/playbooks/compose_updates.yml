@@ -1,0 +1,49 @@
+---
+- name: Update all Docker Compose stacks
+  hosts: homelab_docker
+  become: true
+  vars:
+    stacks_base_path: "{{ '/mnt/docker/stacks/prod-control' if inventory_hostname == 'prod-control' else '/mnt/docker/stacks' }}"
+
+  tasks:
+    - name: Find all docker-compose.yml files
+      find:
+        paths: "{{ stacks_base_path }}"
+        patterns: "docker-compose.yml,docker-compose.yaml,compose.yml,compose.yaml"
+        recurse: true
+      register: compose_files
+
+    - name: Display found stacks
+      debug:
+        msg: "Found {{ compose_files.files | length }} Docker Compose stack(s)"
+
+    - name: Pull latest images for each stack
+      command: docker compose pull
+      args:
+        chdir: "{{ item.path | dirname }}"
+      environment:
+        COMPOSE_PARALLEL_LIMIT: "4"
+      loop: "{{ compose_files.files }}"
+      register: pull_result
+      changed_when: "'Pulled' in pull_result.stderr or 'Downloaded' in pull_result.stderr"
+      failed_when: pull_result.rc != 0
+
+    - name: Restart stacks with new images
+      command: docker compose up -d --remove-orphans
+      args:
+        chdir: "{{ item.path | dirname }}"
+      loop: "{{ compose_files.files }}"
+      register: update_result
+
+    - name: Remove unused images
+      command: docker image prune -af
+      register: prune_result
+      changed_when: "'Total reclaimed space' in prune_result.stdout"
+
+    - name: Display update summary
+      debug:
+        msg:
+          - "Stack: {{ item.item.path | dirname | basename }}"
+          - "Status: Updated"
+      loop: "{{ update_result.results }}"
+      when: item.changed
