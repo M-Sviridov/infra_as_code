@@ -115,6 +115,7 @@ module "prod_docker" {
     { path = "/dev/nvidia-caps/nvidia-cap1" },
     { path = "/dev/nvidia-caps/nvidia-cap2" },
     { path = "/dev/nvram" },
+    { path = "/dev/nvidia-modeset" },
   ]
 
   disk_size        = 80
