@@ -56,6 +56,7 @@ variable "description" {
 
 variable "devices" {
   type = list(object({
+    uid  = optional(number, 0)
     gid  = optional(number, 0)
     path = string
   }))
@@ -73,6 +74,12 @@ variable "features_nesting" {
   type        = bool
   default     = true
   description = "Enable container nesting (for Docker/LXC inside container)"
+}
+
+variable "uid" {
+  type        = number
+  default     = 0
+  description = "User ID to be assigned to device node"
 }
 
 variable "gid" {

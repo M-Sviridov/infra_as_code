@@ -27,6 +27,7 @@ resource "proxmox_virtual_environment_container" "lxc_container" {
   dynamic "device_passthrough" {
     for_each = var.devices
     content {
+      uid  = device_passthrough.value.uid
       gid  = device_passthrough.value.gid
       path = device_passthrough.value.path
     }
