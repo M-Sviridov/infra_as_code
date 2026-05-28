@@ -41,6 +41,7 @@ module "dmz_books" {
   ]
 
   network_mac_address = "BC:24:11:CE:5F:08"
+  started             = false
   tags                = ["docker", "dmz", "opentofu"]
 }
 
@@ -157,7 +158,7 @@ module "dmz_photos" {
     },
   ]
 
-  disk_size        = 20
+  disk_size        = 30
   memory_dedicated = 8192
 
   mounts = [
@@ -179,5 +180,5 @@ module "dmz_photos" {
 
   network_mac_address = "BC:24:11:88:6C:71"
   started             = true
-  tags                = ["docker", "dmz", "opentofu"]
+  tags                = ["docker", "dmz", "nvidia", "opentofu"]
 }
