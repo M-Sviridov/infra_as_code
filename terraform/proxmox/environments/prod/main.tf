@@ -1,6 +1,6 @@
 module "prod_fileserver" {
   source    = "../../modules/lxc"
-  providers = { proxmox = proxmox }
+  providers = { proxmox = proxmox.root }
 
   # Required variables
   hostname         = "prod-fileserver"
@@ -85,7 +85,7 @@ module "prod_frigate" {
 
   network_mac_address = "BC:24:11:3D:FF:66"
   started             = true
-  tags                = ["docker", "opentofu", "prod", "tailscale"]
+  tags                = ["docker", "nvidia", "opentofu", "prod", "tailscale"]
 }
 
 module "prod_docker" {
@@ -118,7 +118,7 @@ module "prod_docker" {
     { path = "/dev/nvidia-modeset" },
   ]
 
-  disk_size        = 80
+  disk_size        = 100
   memory_dedicated = 32768
 
   mounts = [
@@ -144,7 +144,7 @@ module "prod_docker" {
 
   network_mac_address = "BC:24:11:6A:F8:86"
   started             = true
-  tags                = ["docker", "opentofu", "prod"]
+  tags                = ["docker", "nvidia", "opentofu", "prod"]
 }
 
 module "prod_control" {
@@ -229,7 +229,7 @@ module "prod_pms" {
 
   network_mac_address = "BC:24:11:F0:FA:BD"
   started             = true
-  tags                = ["docker", "opentofu", "prod"]
+  tags                = ["docker", "opentofu", "prod", "tailscale"]
 }
 
 module "prod_jellyfin" {
@@ -283,6 +283,6 @@ module "prod_jellyfin" {
   ]
 
   network_mac_address = "BC:24:11:86:25:8F"
-  started             = true
+  started             = false
   tags                = ["docker", "opentofu", "prod", "tailscale"]
 }
